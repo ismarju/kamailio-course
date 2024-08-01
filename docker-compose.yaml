@@ -98,7 +98,7 @@ services:
     expose:
       - '3306'
     volumes:
-      - ./db:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     networks:
       internal:
         ipv4_address: 172.16.254.10
@@ -116,3 +116,7 @@ networks:
             config:
                 - subnet: 172.16.254.0/24
                   gateway: 172.16.254.1
+
+volumes:
+# Prethodno je kreiran volume sa "docker volume create mysql_data"
+  mysql_data:
