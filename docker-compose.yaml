@@ -40,11 +40,14 @@ services:
 
   rtpengine-edge:
     image: drachtio/rtpengine
+    build:
+      context: ./rtpengine-edge/docker
+      dockerfile: Dockerfile
     container_name: rtpengine-edge
     ports:
       - "23000-23100:23000-23100"
     volumes:
-      - ./rtpengine-edge/:/etc
+      - rtpengine_data:/etc
     networks:
       external:
         ipv4_address: 192.168.254.3
@@ -124,3 +127,5 @@ networks:
 volumes:
 # Prethodno je kreiran volume sa "docker volume create mysql_data"
   mysql_data:
+# Prethodno je kreiran volume sa "docker volume create rtpengine_data"
+  rtpengine_data:
