@@ -28,11 +28,31 @@ services:
       - TLSPORT=5061 
       - UDPPORT=5060 
       - PUBLICIP=192.168.254.2 
+      - DBUSERNAME=kamailio 
+      - DBPASSWORD=kamailiorw 
+      - DBHOST=172.16.254.10 
+      - DBNAME=kamailio
     networks:
       external:
         ipv4_address: 192.168.254.2
       internal:
         ipv4_address: 172.16.254.2
+
+  rtpengine-edge:
+    image: drachtio/rtpengine
+    build:
+      context: ./rtpengine-edge/docker
+      dockerfile: Dockerfile
+    container_name: rtpengine-edge
+    ports:
+      - "23000-23100:23000-23100"
+    volumes:
+      - rtpengine_data:/etc
+    networks:
+      external:
+        ipv4_address: 192.168.254.3
+      internal:
+        ipv4_address: 172.16.254.3
 
   b2bua_internal_01:
     tty: true
@@ -80,6 +100,25 @@ services:
       external:
         ipv4_address: 192.168.254.101
 
+  db:
+    image: mysql:5.7
+    restart: always
+    container_name: db01
+    environment:
+      MYSQL_DATABASE: 'kamailio'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'ro_password'
+      MYSQL_ROOT_PASSWORD: 'rw_password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      internal:
+        ipv4_address: 172.16.254.10
+
 
 networks:
     external:
@@ -94,3 +133,9 @@ networks:
             config:
                 - subnet: 172.16.254.0/24
                   gateway: 172.16.254.1
+
+volumes:
+# Prethodno je kreiran volume sa "docker volume create mysql_data"
+  mysql_data:
+# Prethodno je kreiran volume sa "docker volume create rtpengine_data"
+  rtpengine_data:
