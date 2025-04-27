@@ -20,7 +20,8 @@ services:
     ports:
       - "5090:5060"
     volumes:
-      - ./kamailio-default/:/etc/kamailio
+      - ./kamailio-default/etc/kamailio/:/etc/kamailio
+      - ./kamailio-default/etc/resolv.conf:/etc/resolv.conf
     environment:
       - KAM_SHM_MEM_SIZE=256
       - COREIP=172.16.254.2
@@ -127,6 +128,20 @@ services:
       internal:
         ipv4_address: 172.16.254.10
 
+  bind:
+    image: internetsystemsconsortium/bind9:9.18
+    container_name: bind
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    volumes:
+      - ./bind/named.conf:/etc/bind/named.conf
+      - ./bind//named.conf.local:/etc/bind/named.conf.local
+      - ./bind/db.e164.arpa:/etc/bind/db.e164.arpa
+    restart: always
+    networks:
+      internal:
+        ipv4_address: 172.16.254.20
 
 networks:
     external:
